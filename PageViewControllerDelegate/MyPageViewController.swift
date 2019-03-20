@@ -41,7 +41,7 @@ class MyPageViewController: UIPageViewController {
                                animated: true,
                                completion: nil)
         }
-        dataSource = self
+        dataSource =  self 
     }
 }
 
