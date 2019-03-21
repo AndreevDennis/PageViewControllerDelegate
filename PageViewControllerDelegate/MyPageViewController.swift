@@ -10,7 +10,8 @@ import UIKit
 
 class MyPageViewController: UIPageViewController {
     
-    var indexVC : Int?
+    var indexVC : Int = 0
+    var myDefault = UserDefaults.standard
     
     private (set) lazy var myViewControllers = {
         return [
@@ -32,16 +33,22 @@ class MyPageViewController: UIPageViewController {
                 view.backgroundColor = .clear
             }
         }
-        
     }
     override func viewDidLoad() {
-        if let first = myViewControllers.first{
+        dataSource =  self
+        if myDefault.object(forKey: "IndexVC") != nil {
+            self.indexVC = myDefault.integer(forKey: "IndexVC")
+        } else {
+            self.myDefault.set(0, forKey: "IndexVC")
+            
+        }
+        var first = myViewControllers[indexVC]{
             setViewControllers([first],
                                direction: .forward,
                                animated: true,
                                completion: nil)
         }
-        dataSource =  self 
+
     }
 }
 
@@ -55,9 +62,10 @@ extension MyPageViewController: UIPageViewControllerDataSource {
         if previousIndex < 0 {
             previousIndex = myViewControllers.count - 1
         }
-//        guard previousIndex >= 0 else { return nil }
+        //        guard previousIndex >= 0 else { return nil }
         guard myViewControllers.count > previousIndex else {return nil}
         self.indexVC = previousIndex
+        myDefault.set(self.indexVC ?? 0, forKey: "IndexVC")
         return myViewControllers[previousIndex]
     }
     
@@ -70,8 +78,9 @@ extension MyPageViewController: UIPageViewControllerDataSource {
         if myViewControllers.count == nextIndex {
             nextIndex = 0
         }
-//        guard myViewControllers.count > nextIndex else {return nil}
+        //        guard myViewControllers.count > nextIndex else {return nil}
         self.indexVC = nextIndex
+        myDefault.set(self.indexVC ?? 0, forKey: "IndexVC")
         return myViewControllers[nextIndex]
     }
     
@@ -79,9 +88,9 @@ extension MyPageViewController: UIPageViewControllerDataSource {
         return myViewControllers.count
     }
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-//        guard let firstViewController = viewControllers?.first,
-//            let firstViewControllerindex = myViewControllers.firstIndex(of: firstViewController)
-//            else {return 0}
+        //        guard let firstViewController = viewControllers?.first,
+        //            let firstViewControllerindex = myViewControllers.firstIndex(of: firstViewController)
+        //            else {return 0}
         return self.indexVC ?? 0
     }
     
